@@ -4,19 +4,31 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"uhuaha/computers-management/internal/model"
 
 	"github.com/gorilla/mux"
 )
 
+type ComputerMgmtService interface {
+	AddComputer(computer model.Computer) (int, error)
+	GetComputer(computerID int) (model.Computer, error)
+	GetAllComputers() ([]model.Computer, error)
+	UpdateComputer(computerID int, data model.Computer) error
+	GetComputersByEmployee(employeeID int) ([]model.Computer, error)
+	DeleteComputerFromEmployee(computerID, empoyeeID int) error
+}
+
 type ComputerMgmtHandler struct {
-	// TODO: service
+	computerMgmtService ComputerMgmtService
 }
 
-func New() *ComputerMgmtHandler {
-	return &ComputerMgmtHandler{}
+func New(service ComputerMgmtService) *ComputerMgmtHandler {
+	return &ComputerMgmtHandler{
+		computerMgmtService: service,
+	}
 }
 
-func (c *ComputerMgmtHandler) CreateComputer(w http.ResponseWriter, r *http.Request) {
+func (c *ComputerMgmtHandler) AddComputer(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	if _, err := w.Write([]byte("Computer created")); err != nil {
 		fmt.Println("Failed to write response: ", err)

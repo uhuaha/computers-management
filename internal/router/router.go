@@ -7,7 +7,7 @@ import (
 )
 
 type Handler interface {
-	CreateComputer(w http.ResponseWriter, r *http.Request)
+	AddComputer(w http.ResponseWriter, r *http.Request)
 	GetComputerByID(w http.ResponseWriter, r *http.Request)
 	GetAllComputers(w http.ResponseWriter, r *http.Request)
 	UpdateComputer(w http.ResponseWriter, r *http.Request)
@@ -20,7 +20,7 @@ func New(handler Handler) *mux.Router {
 
 	// - The system administrator wants to be able to add a new computer to an employee
 	// • The system administrator wants to be informed when an employee is assigned 3 or more computers
-	router.HandleFunc("/computers", handler.CreateComputer).Methods("POST")
+	router.HandleFunc("/computers", handler.AddComputer).Methods("POST")
 
 	// • The system administrator wants to be able to get the data of a single computer
 	router.HandleFunc("/computers/{computerID}", handler.GetComputerByID).Methods("GET")
