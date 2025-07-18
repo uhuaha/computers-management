@@ -26,6 +26,8 @@ func NewComputerMgmtService(repo ComputerRepository) *ComputerMgmtService {
 }
 
 func (s *ComputerMgmtService) AddComputer(computer model.Computer) (int, error) {
+	// TODO: check if abbreviation has only 3 characters
+
 	computerDBO := convertComputerModelToDBO(computer)
 
 	computerID, err := s.repository.AddComputer(computerDBO)

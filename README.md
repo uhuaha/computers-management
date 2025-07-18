@@ -17,4 +17,6 @@ Execute `go run cmd/main.go` in the project's root directory.
 
 # Possible improvements
 - Define OpenAPI specs for documenting the routes and their parameters and request and response bodies.
+- Have all handler methods covered by unit tests. For brevity and example only handler.AddComputer() is covered.
+
 - A repository.GetAll() should have pagination implemented or a hard limit for requested resources is set on DB level.
