@@ -8,10 +8,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Conn *sql.DB
-
-func NewConnection() (Conn, error) {
-	connStr := "host=localhost port=5432 user=postgres password=myPass dbname=computers sslmode=disable"
+func NewConnection() (*sql.DB, error) {
+	connStr := "host=localhost port=5432 user=postgres password=mypassword dbname=computers sslmode=disable"
 
 	conn, err := sql.Open("postgres", connStr)
 	if err != nil {

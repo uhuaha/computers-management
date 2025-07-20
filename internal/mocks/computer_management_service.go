@@ -49,18 +49,18 @@ func (mr *MockComputerMgmtServiceMockRecorder) AddComputer(computer interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddComputer", reflect.TypeOf((*MockComputerMgmtService)(nil).AddComputer), computer)
 }
 
-// DeleteComputerFromEmployee mocks base method.
-func (m *MockComputerMgmtService) DeleteComputerFromEmployee(computerID, empoyeeID int) error {
+// DeleteComputer mocks base method.
+func (m *MockComputerMgmtService) DeleteComputer(computerID int) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteComputerFromEmployee", computerID, empoyeeID)
+	ret := m.ctrl.Call(m, "DeleteComputer", computerID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteComputerFromEmployee indicates an expected call of DeleteComputerFromEmployee.
-func (mr *MockComputerMgmtServiceMockRecorder) DeleteComputerFromEmployee(computerID, empoyeeID interface{}) *gomock.Call {
+// DeleteComputer indicates an expected call of DeleteComputer.
+func (mr *MockComputerMgmtServiceMockRecorder) DeleteComputer(computerID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteComputerFromEmployee", reflect.TypeOf((*MockComputerMgmtService)(nil).DeleteComputerFromEmployee), computerID, empoyeeID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteComputer", reflect.TypeOf((*MockComputerMgmtService)(nil).DeleteComputer), computerID)
 }
 
 // GetAllComputers mocks base method.
@@ -94,18 +94,18 @@ func (mr *MockComputerMgmtServiceMockRecorder) GetComputer(computerID interface{
 }
 
 // GetComputersByEmployee mocks base method.
-func (m *MockComputerMgmtService) GetComputersByEmployee(employeeID int) ([]model.Computer, error) {
+func (m *MockComputerMgmtService) GetComputersByEmployee(employee string) ([]model.Computer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetComputersByEmployee", employeeID)
+	ret := m.ctrl.Call(m, "GetComputersByEmployee", employee)
 	ret0, _ := ret[0].([]model.Computer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetComputersByEmployee indicates an expected call of GetComputersByEmployee.
-func (mr *MockComputerMgmtServiceMockRecorder) GetComputersByEmployee(employeeID interface{}) *gomock.Call {
+func (mr *MockComputerMgmtServiceMockRecorder) GetComputersByEmployee(employee interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComputersByEmployee", reflect.TypeOf((*MockComputerMgmtService)(nil).GetComputersByEmployee), employeeID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComputersByEmployee", reflect.TypeOf((*MockComputerMgmtService)(nil).GetComputersByEmployee), employee)
 }
 
 // UpdateComputer mocks base method.

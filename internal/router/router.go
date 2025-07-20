@@ -12,7 +12,7 @@ type Handler interface {
 	GetAllComputers(w http.ResponseWriter, r *http.Request)
 	UpdateComputer(w http.ResponseWriter, r *http.Request)
 	GetComputersByEmployee(w http.ResponseWriter, r *http.Request)
-	DeleteComputerFromEmployee(w http.ResponseWriter, r *http.Request)
+	DeleteComputer(w http.ResponseWriter, r *http.Request)
 }
 
 func New(handler Handler) *mux.Router {
@@ -32,10 +32,10 @@ func New(handler Handler) *mux.Router {
 	router.HandleFunc("/computers/{computerID}", handler.UpdateComputer).Methods("PUT")
 
 	// • The system administrator wants to be able to get all assigned computers for an employee
-	router.HandleFunc("/employees/{employeeID}/computers", handler.GetComputersByEmployee).Methods("GET")
+	router.HandleFunc("/employees/{employee}/computers", handler.GetComputersByEmployee).Methods("GET")
 
 	// • The system administrator wants to be able to remove a computer from an employee
-	router.HandleFunc("/employees/{employeeID}/computers/{computerID}", handler.DeleteComputerFromEmployee).Methods("DELETE")
+	router.HandleFunc("/computers/{computerID}", handler.DeleteComputer).Methods("DELETE")
 
 	return router
 }

@@ -11,8 +11,8 @@ type ComputerRepository interface {
 	GetComputer(computerID int) (dbo.Computer, error)
 	GetAllComputers() ([]dbo.Computer, error)
 	UpdateComputer(computerID int, data dbo.Computer) error
-	GetComputersByEmployee(employeeID int) ([]dbo.Computer, error)
-	DeleteComputerFromEmployee(computerID, employeeID int) error
+	GetComputersByEmployee(employee string) ([]dbo.Computer, error)
+	DeleteComputer(computerID int) error
 }
 
 type ComputerMgmtService struct {
@@ -78,10 +78,10 @@ func (s *ComputerMgmtService) UpdateComputer(computerID int, data model.Computer
 	return nil
 }
 
-func (s *ComputerMgmtService) GetComputersByEmployee(employeeID int) ([]model.Computer, error) {
-	computerDBOs, err := s.repository.GetComputersByEmployee(employeeID)
+func (s *ComputerMgmtService) GetComputersByEmployee(employee string) ([]model.Computer, error) {
+	computerDBOs, err := s.repository.GetComputersByEmployee(employee)
 	if err != nil {
-		return []model.Computer{}, fmt.Errorf("failed to get computers for employee with ID=%d: %w", employeeID, err)
+		return []model.Computer{}, fmt.Errorf("failed to get computers for employee %q: %w", employee, err)
 	}
 
 	computers := make([]model.Computer, len(computerDBOs))
@@ -92,10 +92,10 @@ func (s *ComputerMgmtService) GetComputersByEmployee(employeeID int) ([]model.Co
 	return computers, nil
 }
 
-func (s *ComputerMgmtService) DeleteComputerFromEmployee(computerID, employeeID int) error {
-	err := s.repository.DeleteComputerFromEmployee(computerID, employeeID)
+func (s *ComputerMgmtService) DeleteComputer(computerID int) error {
+	err := s.repository.DeleteComputer(computerID)
 	if err != nil {
-		return fmt.Errorf("failed to delete computer (ID=%d) from employee (ID=%d): %w", computerID, employeeID, err)
+		return fmt.Errorf("failed to delete computer with ID=%d: %w", computerID, err)
 	}
 
 	return nil
