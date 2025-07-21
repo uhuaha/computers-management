@@ -101,6 +101,7 @@ func (c *ComputerMgmtHandler) AddComputer(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// GetComputer gets a computer's data by its ID.
 func (c *ComputerMgmtHandler) GetComputerByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -141,6 +142,7 @@ func (c *ComputerMgmtHandler) GetComputerByID(w http.ResponseWriter, r *http.Req
 	}
 }
 
+// GetAllComputers retrieves all computers' data from the storage.
 func (c *ComputerMgmtHandler) GetAllComputers(w http.ResponseWriter, r *http.Request) {
 	computers, err := c.computerMgmtService.GetAllComputers()
 	if err != nil {
@@ -165,6 +167,7 @@ func (c *ComputerMgmtHandler) GetAllComputers(w http.ResponseWriter, r *http.Req
 	}
 }
 
+// UpdateComputer updates a computer's data.
 func (c *ComputerMgmtHandler) UpdateComputer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -207,6 +210,7 @@ func (c *ComputerMgmtHandler) UpdateComputer(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// GetComputersByEmployee retrieves all computers from storage that are assigned to a given employee.
 func (c *ComputerMgmtHandler) GetComputersByEmployee(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -240,6 +244,7 @@ func (c *ComputerMgmtHandler) GetComputersByEmployee(w http.ResponseWriter, r *h
 	}
 }
 
+// DeleteComputer deletes a computer by its ID.
 func (c *ComputerMgmtHandler) DeleteComputer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

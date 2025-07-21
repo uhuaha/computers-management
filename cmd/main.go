@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,6 +11,8 @@ import (
 	"uhuaha/computers-management/internal/handler"
 	"uhuaha/computers-management/internal/router"
 	"uhuaha/computers-management/internal/service"
+
+	"github.com/bdlm/log"
 )
 
 const PORT = ":8081"
@@ -34,7 +35,7 @@ func main() {
 	}
 
 	go func() {
-		log.Println("Listening and serving on port " + PORT + " ...")
+		log.Info("Listening and serving on port " + PORT + " ...")
 
 		err := http.ListenAndServe(PORT, router)
 		if err != nil {
@@ -47,7 +48,7 @@ func main() {
 
 	<-quit
 
-	log.Println("Shutting down server...")
+	log.Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

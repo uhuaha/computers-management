@@ -4,8 +4,8 @@ type AddComputerRequest struct {
 	Name                 string  `json:"name"`
 	IPAddress            string  `json:"ip_address"`
 	MACAddress           string  `json:"mac_address"`
-	EmployeeAbbreviation *string `json:"employee_abbreviation"` // optional
-	Description          *string `json:"description"`           // optional
+	EmployeeAbbreviation *string `json:"employee_abbreviation"`
+	Description          *string `json:"description"`
 }
 
 type AddComputerResponse struct {
@@ -29,6 +29,6 @@ type UpdateComputerRequest struct {
 	Name                 string  `json:"name"`
 	IPAddress            string  `json:"ip_address"`
 	MACAddress           string  `json:"mac_address"`
-	EmployeeAbbreviation *string `json:"employee_abbreviation"` // optional
-	Description          *string `json:"description"`           // optional
+	EmployeeAbbreviation *string `json:"employee_abbreviation"`
+	Description          *string `json:"description"`
 }

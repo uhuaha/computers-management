@@ -13,17 +13,20 @@ GET /employees/{employee}/computers
 DELETE /computers/{computerID}
 
 # How to run
-Execute `docker compose up` (if you have Docker compose v2 installed) or `docker-compose up` (if you use v1 of Docker compose) to fire up the database (migrations are run implicitly).
+Execute `docker compose up` (if you have Docker compose v2 installed) or `docker-compose up` (if you use v1 of Docker compose) to fire up the database (migrations are run implicitly) and the notify service.
 Then, start the server by executing `go run cmd/main.go` in the project's root directory.
 
-# Improvements for making this service more robust
-- Define OpenAPI specs for documenting the routes and their parameters and request and response bodies.
-- Have all handler methods covered by unit tests. For brevity and example only handler.AddComputer() is covered.
+# How to test
+Import the provided Postman collection and test the endpoints once the docker containers and the server are running.
 
-- A repository.GetAll() should have pagination implemented or a hard limit for requested resources is set on DB level.
+# Possible areas of improvement
+- Define OpenAPI specs for documenting the routes and their parameters as well as their request and response bodies.
+- Have all handler methods covered by unit tests. For brevity and example only handler.AddComputer() is covered.
+- A repository.GetAll() should have pagination (LIMIT and OFFSET clauses) implemented or have a hard limit for requested resources on DB level (see: LIMIT clause).
 - The computers table should have created_at and updated_at columns to be able to track dates of creation and update.
 - Currently the delete repository method executes a hard delete of the given resource. Providing a deleted_at column and executing an UPDATE on the resource to be deleted leads to a soft delete which would keep the resource in the DB.
-
-- Check for context timeout and cancellation by using context.WithTimeout() etc.: One would need to pass a context through all levels and methods - down to the repository level - to make sure the overall call doesn't take longer than required. As implemented at the moment the DB could stall and, thus, the DB call from the repository layer would stall as well as long as the DB stalls.
-
-- Catch panics and ...
+- Use context.WithTimeout() in the handler functions: It's recommended to pass a context through all levels and methods - down to the repository level - to make sure the overall call doesn't take longer than a maximum amount of time because the context times out after a specified time period.
+- Catching, logging and recovering from panics that happen anywhere in the code is recommended. One could e.g. wrap the mux.Router with a recover middleware that would prevent the server from crashing silently.
+- We would need many more unit tests and end-to-end tests. E2e testing could e.g. spin up an SQLight database for in-memory storage during testing.
+- The storage connection's configuration could be read from environment variables specified in the docker-compose file and read by the concrete connection implementation - instead of providing a hard-coded connection string inside the code.
+- The linting can be extended by proving an own golang-ci.yml file that has all necessary linters enabled.
