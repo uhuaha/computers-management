@@ -2,24 +2,24 @@
 This repository provides a REST API for managing the computers of employees of a fictious company. The logic of this service 
 is just an MVP. Possible points of improvements are highlighted in a separate section below.
 
-# Registerd routes
-These routes can be reached at 'http://localhost:8081':
+## Registered routes
+These routes can be reached at `http://localhost:8081`:
 
-POST /computers
-GET /computers/{computerID}
-GET /computers
-PUT /computers/{computerID}
-GET /employees/{employee}/computers
-DELETE /computers/{computerID}
+- `POST /computers`
+- `GET /computers/{computerID}`
+- `GET /computers`
+- `PUT /computers/{computerID}`
+- `GET /employees/{employee}/computers`
+- `DELETE /computers/{computerID}`
 
-# How to run
+## How to run
 Execute `docker compose up` (if you have Docker compose v2 installed) or `docker-compose up` (if you use v1 of Docker compose) to fire up the database (migrations are run implicitly) and the notify service.
 Then, start the server by executing `go run cmd/main.go` in the project's root directory.
 
-# How to test
-Import the provided Postman collection and test the endpoints once the docker containers and the server are running.
+## How to test
+Import the provided Postman collection and test the endpoints once the docker containers and the server are running. Execute `make test` in order to run all unit tests.
 
-# Possible areas of improvement
+## Possible areas of improvement
 - Define OpenAPI specs for documenting the routes and their parameters as well as their request and response bodies.
 - Have all handler methods covered by unit tests. For brevity and example only handler.AddComputer() is covered.
 - A repository.GetAll() should have pagination (LIMIT and OFFSET clauses) implemented or have a hard limit for requested resources on DB level (see: LIMIT clause).
