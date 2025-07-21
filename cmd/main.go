@@ -14,7 +14,7 @@ import (
 	"uhuaha/computers-management/internal/service"
 )
 
-const PORT = ":8080"
+const PORT = ":8081"
 
 func main() {
 	dbConn, err := db.NewConnection()
@@ -24,7 +24,8 @@ func main() {
 
 	repository := postgres.NewRepository(dbConn)
 	computerMgmtService := service.NewComputerMgmtService(repository)
-	handler := handler.New(computerMgmtService)
+	notifier := service.NewNotifier()
+	handler := handler.New(computerMgmtService, notifier)
 	router := router.New(handler)
 
 	server := &http.Server{
@@ -33,7 +34,7 @@ func main() {
 	}
 
 	go func() {
-		log.Println("Listening and serving on port 8080...")
+		log.Println("Listening and serving on port " + PORT + " ...")
 
 		err := http.ListenAndServe(PORT, router)
 		if err != nil {

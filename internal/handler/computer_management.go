@@ -21,16 +21,24 @@ type ComputerMgmtService interface {
 	DeleteComputer(computerID int) error
 }
 
-type ComputerMgmtHandler struct {
-	computerMgmtService ComputerMgmtService
+type Notifier interface {
+	SendMessage(employeeAbbreviation string)
 }
 
-func New(service ComputerMgmtService) *ComputerMgmtHandler {
+type ComputerMgmtHandler struct {
+	computerMgmtService ComputerMgmtService
+	notifier Notifier
+}
+
+func New(service ComputerMgmtService, notifier Notifier) *ComputerMgmtHandler {
 	return &ComputerMgmtHandler{
 		computerMgmtService: service,
+		notifier: notifier,
 	}
 }
 
+// AddComputer adds the provided computer and sends a message if three or more computers have been assigned to
+// the same employee.
 func (c *ComputerMgmtHandler) AddComputer(w http.ResponseWriter, r *http.Request) {
 	var data AddComputerRequest
 
@@ -59,6 +67,20 @@ func (c *ComputerMgmtHandler) AddComputer(w http.ResponseWriter, r *http.Request
 		log.Error("failed to add computer: " + err.Error())
 		http.Error(w, "Failed to add computer", http.StatusInternalServerError)
 		return
+	}
+
+	// Notify system administrator if there are 3 or more computers assigned to the given employee.
+	if data.EmployeeAbbreviation != nil {
+		computers, err := c.computerMgmtService.GetComputersByEmployee(*data.EmployeeAbbreviation)
+		if err != nil {
+			log.Error("failed to get computers: " + err.Error())
+			w.WriteHeader(http.StatusCreated)
+			return
+		}
+
+		if len(computers) >= 3 {
+			go c.notifier.SendMessage(*data.EmployeeAbbreviation)
+		}
 	}
 
 	response := AddComputerResponse{

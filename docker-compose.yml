@@ -23,5 +23,12 @@ services:
         "sleep 3 && migrate -path=/migrations -database=postgres://postgres:mypassword@db:5432/computers?sslmode=disable up"
       ]
 
+  notifier:
+    image: greenbone/exercise-admin-notification
+    container_name: notifier
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
 volumes:
   pgdata:

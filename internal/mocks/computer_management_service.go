@@ -121,3 +121,38 @@ func (mr *MockComputerMgmtServiceMockRecorder) UpdateComputer(computerID, data i
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateComputer", reflect.TypeOf((*MockComputerMgmtService)(nil).UpdateComputer), computerID, data)
 }
+
+// MockNotifier is a mock of Notifier interface.
+type MockNotifier struct {
+	ctrl     *gomock.Controller
+	recorder *MockNotifierMockRecorder
+}
+
+// MockNotifierMockRecorder is the mock recorder for MockNotifier.
+type MockNotifierMockRecorder struct {
+	mock *MockNotifier
+}
+
+// NewMockNotifier creates a new mock instance.
+func NewMockNotifier(ctrl *gomock.Controller) *MockNotifier {
+	mock := &MockNotifier{ctrl: ctrl}
+	mock.recorder = &MockNotifierMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockNotifier) EXPECT() *MockNotifierMockRecorder {
+	return m.recorder
+}
+
+// SendMessage mocks base method.
+func (m *MockNotifier) SendMessage(employeeAbbreviation string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendMessage", employeeAbbreviation)
+}
+
+// SendMessage indicates an expected call of SendMessage.
+func (mr *MockNotifierMockRecorder) SendMessage(employeeAbbreviation interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessage", reflect.TypeOf((*MockNotifier)(nil).SendMessage), employeeAbbreviation)
+}

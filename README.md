@@ -3,7 +3,7 @@ This repository provides a REST API for managing the computers of employees of a
 is just an MVP. Possible points of improvements are highlighted in a separate section below.
 
 # Registerd routes
-These routes can be reached at 'http://localhost:8080':
+These routes can be reached at 'http://localhost:8081':
 
 POST /computers
 GET /computers/{computerID}
@@ -25,3 +25,5 @@ Then, start the server by executing `go run cmd/main.go` in the project's root d
 - Currently the delete repository method executes a hard delete of the given resource. Providing a deleted_at column and executing an UPDATE on the resource to be deleted leads to a soft delete which would keep the resource in the DB.
 
 - Check for context timeout and cancellation by using context.WithTimeout() etc.: One would need to pass a context through all levels and methods - down to the repository level - to make sure the overall call doesn't take longer than required. As implemented at the moment the DB could stall and, thus, the DB call from the repository layer would stall as well as long as the DB stalls.
+
+- Catch panics and ...
