@@ -2,7 +2,7 @@
 
 ## Run tests
 test:
-	go test ./...
+	go test -cover ./...
 
 ## Run linting
 lint:
