@@ -1,0 +1,14 @@
+linters:
+  enable:
+    - revive
+    - gofumpt
+
+run:
+  timeout: 5m
+
+linters-settings:
+  revive:
+    ignore-generated-header: true
+    severity: warning
+  gofumpt:
+    extra-rules: true

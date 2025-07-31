@@ -21,7 +21,7 @@ func stringToNullString(s *string) sql.NullString {
 	if s != nil {
 		return sql.NullString{String: *s, Valid: true}
 	}
-	
+
 	return sql.NullString{Valid: false}
 }
 

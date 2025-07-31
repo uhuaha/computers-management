@@ -34,8 +34,7 @@ type servicesMocks struct {
 
 func TestAddComputerHandler(t *testing.T) {
 	t.Run("valid JSON without optional fields", func(t *testing.T) {
-		jsonBody :=
-			`{
+		jsonBody := `{
 				"name": "TestPC",
 				"ip_address": "192.168.0.1",
 				"mac_address": "AA:BB:CC:DD:EE:FF"

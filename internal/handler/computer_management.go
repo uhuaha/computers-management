@@ -5,8 +5,9 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	errs "uhuaha/computers-management/internal/errors"
 	"uhuaha/computers-management/internal/model"
+
+	errs "uhuaha/computers-management/internal/errors"
 
 	"github.com/bdlm/log"
 	"github.com/gorilla/mux"
@@ -27,13 +28,13 @@ type Notifier interface {
 
 type ComputerMgmtHandler struct {
 	computerMgmtService ComputerMgmtService
-	notifier Notifier
+	notifier            Notifier
 }
 
 func New(service ComputerMgmtService, notifier Notifier) *ComputerMgmtHandler {
 	return &ComputerMgmtHandler{
 		computerMgmtService: service,
-		notifier: notifier,
+		notifier:            notifier,
 	}
 }
 
