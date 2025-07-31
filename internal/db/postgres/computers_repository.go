@@ -1,3 +1,4 @@
+// Package postgres provides utilities and wrappers for interacting with PostgreSQL databases.
 package postgres
 
 import (
@@ -17,6 +18,8 @@ func NewRepository(dbConn *sql.DB) *Repository {
 	}
 }
 
+// AddComputer inserts a new computer into the database and returns its generated ID,
+// or an error if the insertion fails.
 func (r *Repository) AddComputer(computer dbo.Computer) (int, error) {
 	query := `
 		INSERT INTO computers (name, ip_address, mac_address, employee_abbreviation, description)
@@ -39,6 +42,8 @@ func (r *Repository) AddComputer(computer dbo.Computer) (int, error) {
 	return computerID, nil
 }
 
+// GetComputer retrieves a computer by its ID from the database.
+// It returns the computer or an error if the record is not found or the query fails.
 func (r *Repository) GetComputer(computerID int) (dbo.Computer, error) {
 	stmt, err := r.dbConn.Prepare(`SELECT * FROM computers WHERE id = $1;`)
 	if err != nil {
@@ -65,6 +70,8 @@ func (r *Repository) GetComputer(computerID int) (dbo.Computer, error) {
 	return computerDBO, nil
 }
 
+// GetAllComputers retrieves all computers from the database. The number of records returned is limited to 100.
+// It returns a list of computers or an error if the query fails.
 func (r *Repository) GetAllComputers() ([]dbo.Computer, error) {
 	stmt, err := r.dbConn.Prepare(`SELECT * FROM computers LIMIT 100;`)
 	if err != nil {
@@ -105,6 +112,7 @@ func (r *Repository) GetAllComputers() ([]dbo.Computer, error) {
 	return computerDBOs, nil
 }
 
+// UpdateComputer updates an existing computer's details in the database. It returns an error if the update fails.
 func (r *Repository) UpdateComputer(computerID int, data dbo.Computer) error {
 	stmt, err := r.dbConn.Prepare(`
 		UPDATE computers 
@@ -125,6 +133,8 @@ func (r *Repository) UpdateComputer(computerID int, data dbo.Computer) error {
 	return nil
 }
 
+// GetComputersByEmployee retrieves all computers associated with a specific employee abbreviation.
+// It returns a list of computers or an error if the query fails.
 func (r *Repository) GetComputersByEmployee(employee string) ([]dbo.Computer, error) {
 	stmt, err := r.dbConn.Prepare(`SELECT * FROM computers WHERE employee_abbreviation = $1 LIMIT 100;`)
 	if err != nil {
@@ -165,6 +175,8 @@ func (r *Repository) GetComputersByEmployee(employee string) ([]dbo.Computer, er
 	return computerDBOs, nil
 }
 
+// DeleteComputer removes a computer from the database by its ID.
+// It returns an error if the deletion fails.
 func (r *Repository) DeleteComputer(computerID int) error {
 	stmt, err := r.dbConn.Prepare(`DELETE FROM computers WHERE id = $1;`)
 	if err != nil {

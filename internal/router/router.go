@@ -1,3 +1,5 @@
+// Package router sets up the HTTP routes for the computer management service
+// using the Gorilla Mux router.
 package router
 
 import (
@@ -15,6 +17,8 @@ type Handler interface {
 	DeleteComputer(w http.ResponseWriter, r *http.Request)
 }
 
+// New creates and returns a new Gorilla Mux router configured with all
+// routes for the computer management service.
 func New(handler Handler) *mux.Router {
 	router := mux.NewRouter()
 

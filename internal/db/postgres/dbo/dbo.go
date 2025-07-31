@@ -1,7 +1,9 @@
+// Package dbo provides database object representations
 package dbo
 
 import "database/sql"
 
+// Computer holds network and employee data for a computer.
 type Computer struct {
 	ID                   int            `db:"id"`
 	Name                 string         `db:"name"`

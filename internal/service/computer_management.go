@@ -1,3 +1,5 @@
+// Package service implements the business logic for the computer management system,
+// acting as a bridge between HTTP handlers and the storage layer.
 package service
 
 import (
@@ -25,6 +27,7 @@ func NewComputerMgmtService(repo ComputerRepository) *ComputerMgmtService {
 	}
 }
 
+// AddComputer stores a new computer and returns its generated ID.
 func (s *ComputerMgmtService) AddComputer(computer model.Computer) (int, error) {
 	computerDBO := convertComputerModelToDBO(computer)
 
@@ -36,6 +39,7 @@ func (s *ComputerMgmtService) AddComputer(computer model.Computer) (int, error) 
 	return computerID, nil
 }
 
+// GetComputer retrieves a computer by its ID.
 func (s *ComputerMgmtService) GetComputer(computerID int) (model.Computer, error) {
 	computerDBO, err := s.repository.GetComputer(computerID)
 	if err != nil {
@@ -47,6 +51,7 @@ func (s *ComputerMgmtService) GetComputer(computerID int) (model.Computer, error
 	return computer, nil
 }
 
+// GetAllComputers returns a list of all computers in the system.
 func (s *ComputerMgmtService) GetAllComputers() ([]model.Computer, error) {
 	computerDBOs, err := s.repository.GetAllComputers()
 	if err != nil {
@@ -61,6 +66,7 @@ func (s *ComputerMgmtService) GetAllComputers() ([]model.Computer, error) {
 	return computers, nil
 }
 
+// UpdateComputer updates the data of an existing computer identified by its ID.
 func (s *ComputerMgmtService) UpdateComputer(computerID int, data model.Computer) error {
 	data.ID = computerID
 	dataToBeUpdated := convertComputerModelToDBO(data)
@@ -73,6 +79,7 @@ func (s *ComputerMgmtService) UpdateComputer(computerID int, data model.Computer
 	return nil
 }
 
+// GetComputersByEmployee retrieves all computers assigned to the specified employee.
 func (s *ComputerMgmtService) GetComputersByEmployee(employee string) ([]model.Computer, error) {
 	computerDBOs, err := s.repository.GetComputersByEmployee(employee)
 	if err != nil {
@@ -87,6 +94,7 @@ func (s *ComputerMgmtService) GetComputersByEmployee(employee string) ([]model.C
 	return computers, nil
 }
 
+// DeleteComputer removes a computer by its ID.
 func (s *ComputerMgmtService) DeleteComputer(computerID int) error {
 	err := s.repository.DeleteComputer(computerID)
 	if err != nil {

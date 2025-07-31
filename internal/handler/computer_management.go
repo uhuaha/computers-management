@@ -1,3 +1,5 @@
+// Package handler contains HTTP handlers for the computer management API
+// handling requests to create, retrieve, update, and delete computers.
 package handler
 
 import (
