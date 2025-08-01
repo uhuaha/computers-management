@@ -24,9 +24,9 @@ func main() {
 	}
 
 	repository := postgres.NewRepository(dbConn)
-	computerMgmtService := service.NewComputerMgmtService(repository)
 	notifier := service.NewNotifier()
-	handler := handler.New(computerMgmtService, notifier)
+	computerMgmtService := service.NewComputerMgmtService(repository, notifier)
+	handler := handler.New(computerMgmtService)
 	router := router.New(handler)
 
 	server := &http.Server{

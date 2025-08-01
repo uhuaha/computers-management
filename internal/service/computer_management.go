@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"uhuaha/computers-management/internal/db/postgres/dbo"
 	"uhuaha/computers-management/internal/model"
+
+	"github.com/bdlm/log"
 )
 
 type ComputerRepository interface {
@@ -17,23 +19,43 @@ type ComputerRepository interface {
 	DeleteComputer(computerID int) error
 }
 
-type ComputerMgmtService struct {
-	repository ComputerRepository
+type MessageSender interface {
+	SendMessage(employeeAbbreviation string)
 }
 
-func NewComputerMgmtService(repo ComputerRepository) *ComputerMgmtService {
+type ComputerMgmtService struct {
+	repository ComputerRepository
+	notifier   MessageSender
+}
+
+func NewComputerMgmtService(repo ComputerRepository, notifier MessageSender) *ComputerMgmtService {
 	return &ComputerMgmtService{
 		repository: repo,
+		notifier:   notifier,
 	}
 }
 
-// AddComputer stores a new computer and returns its generated ID.
+// AddComputer stores a new computer and returns its generated ID. If there are 3 or more computers assigned to the same employee,
+// it sends a notification to the system administrator.
 func (s *ComputerMgmtService) AddComputer(computer model.Computer) (int, error) {
 	computerDBO := convertComputerModelToDBO(computer)
 
 	computerID, err := s.repository.AddComputer(computerDBO)
 	if err != nil {
 		return 0, fmt.Errorf("failed to add a computer: %w", err)
+	}
+
+	// Notify system administrator if there are 3 or more computers assigned to the given employee.
+	if computer.EmployeeAbbreviation != nil {
+		computers, err := s.GetComputersByEmployee(*computer.EmployeeAbbreviation)
+		if err != nil {
+			log.Error("failed to get computers: " + err.Error())
+			return 0, fmt.Errorf("failed to get computers for employee %q: %w", *computer.EmployeeAbbreviation, err)
+		}
+
+		if len(computers) >= 3 {
+			go s.notifier.SendMessage(*computer.EmployeeAbbreviation)
+		}
 	}
 
 	return computerID, nil

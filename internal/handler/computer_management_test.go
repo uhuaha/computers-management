@@ -21,15 +21,8 @@ type addComputerMock struct {
 	returnError   error
 }
 
-type getComputersByEmployeeMock struct {
-	employee        string
-	returnComputers []model.Computer
-	returnError     error
-}
-
 type servicesMocks struct {
-	addComputer            addComputerMock
-	getComputersByEmployee getComputersByEmployeeMock
+	addComputer addComputerMock
 }
 
 func TestAddComputerHandler(t *testing.T) {
@@ -67,11 +60,9 @@ func TestAddComputerHandler(t *testing.T) {
 			AddComputer(servicesMocks.addComputer.expectedModel).
 			Return(servicesMocks.addComputer.returnID, servicesMocks.addComputer.returnError)
 
-		mockNotifier := mocks.NewMockNotifier(ctrl)
-
 		// Create system under test
 
-		handler := New(mockComputerMgmtService, mockNotifier)
+		handler := New(mockComputerMgmtService)
 		handler.AddComputer(rec, req)
 
 		result := rec.Result()
@@ -126,26 +117,15 @@ func TestAddComputerHandler(t *testing.T) {
 				returnID:    2,
 				returnError: nil,
 			},
-			getComputersByEmployee: getComputersByEmployeeMock{
-				employee:        "STR",
-				returnComputers: []model.Computer{{}},
-				returnError:     nil,
-			},
 		}
 
 		mockComputerMgmtService.EXPECT().
 			AddComputer(servicesMocks.addComputer.expectedModel).
 			Return(servicesMocks.addComputer.returnID, servicesMocks.addComputer.returnError)
 
-		mockComputerMgmtService.EXPECT().
-			GetComputersByEmployee(servicesMocks.getComputersByEmployee.employee).
-			Return(servicesMocks.getComputersByEmployee.returnComputers, servicesMocks.getComputersByEmployee.returnError)
-
-		mockNotifier := mocks.NewMockNotifier(ctrl)
-
 		// Create system under test
 
-		handler := New(mockComputerMgmtService, mockNotifier)
+		handler := New(mockComputerMgmtService)
 		handler.AddComputer(rec, req)
 
 		result := rec.Result()
@@ -202,11 +182,9 @@ func TestAddComputerHandler(t *testing.T) {
 			AddComputer(servicesMocks.addComputer.expectedModel).
 			Return(servicesMocks.addComputer.returnID, servicesMocks.addComputer.returnError)
 
-		mockNotifier := mocks.NewMockNotifier(ctrl)
-
 		// Set up system under test
 
-		handler := New(mockComputerMgmtService, mockNotifier)
+		handler := New(mockComputerMgmtService)
 		handler.AddComputer(rec, req)
 
 		result := rec.Result()
@@ -238,11 +216,10 @@ func TestAddComputerHandler(t *testing.T) {
 		defer ctrl.Finish()
 
 		mockComputerMgmtService := mocks.NewMockComputerMgmtService(ctrl)
-		mockNotifier := mocks.NewMockNotifier(ctrl)
 
 		// Set up system under test
 
-		handler := New(mockComputerMgmtService, mockNotifier)
+		handler := New(mockComputerMgmtService)
 		handler.AddComputer(rec, req)
 
 		res := rec.Result()
