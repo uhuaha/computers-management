@@ -15,224 +15,156 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type addComputerMock struct {
-	expectedModel model.Computer
-	returnID      int
-	returnError   error
-}
-
-type servicesMocks struct {
-	addComputer addComputerMock
-}
-
 func TestAddComputerHandler(t *testing.T) {
-	t.Run("valid JSON without optional fields", func(t *testing.T) {
-		jsonBody := `{
-				"name": "TestPC",
-				"ip_address": "192.168.0.1",
-				"mac_address": "AA:BB:CC:DD:EE:FF"
-			}`
+	type args struct {
+		jsonBody string
+	}
+	type mockBehavior func(m *mocks.MockComputerMgmtService)
 
-		req := httptest.NewRequest(http.MethodPost, "/computers", strings.NewReader(jsonBody))
-		req.Header.Set("Content-Type", "application/json")
-		rec := httptest.NewRecorder()
-
-		// Set up mocks
-
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-
-		mockComputerMgmtService := mocks.NewMockComputerMgmtService(ctrl)
-
-		servicesMocks := servicesMocks{
-			addComputer: addComputerMock{
-				expectedModel: model.Computer{
-					Name:       "TestPC",
-					IPAddress:  "192.168.0.1",
-					MACAddress: "AA:BB:CC:DD:EE:FF",
-				},
-				returnID:    1,
-				returnError: nil,
+	tests := []struct {
+		name                string
+		args                args
+		mockBehavior        mockBehavior
+		expectedStatusCode  int
+		expectedContentType string
+		expectedID          int
+	}{
+		{
+			name: "valid JSON without optional fields",
+			args: args{
+				jsonBody: `{
+                    "name": "TestPC",
+                    "ip_address": "192.168.0.1",
+                    "mac_address": "AA:BB:CC:DD:EE:FF"
+                }`,
 			},
-		}
-
-		mockComputerMgmtService.EXPECT().
-			AddComputer(servicesMocks.addComputer.expectedModel).
-			Return(servicesMocks.addComputer.returnID, servicesMocks.addComputer.returnError)
-
-		// Create system under test
-
-		handler := New(mockComputerMgmtService)
-		handler.AddComputer(rec, req)
-
-		result := rec.Result()
-		defer result.Body.Close()
-
-		// Define expections
-
-		expectedStatusCode := http.StatusCreated
-		expectedContentType := "application/json"
-		expectedReturnID := servicesMocks.addComputer.returnID
-
-		// Assertions
-
-		assert.Equal(t, expectedStatusCode, result.StatusCode)
-		assert.Equal(t, expectedContentType, result.Header.Get("Content-Type"))
-
-		var resp AddComputerResponse
-		err := json.NewDecoder(result.Body).Decode(&resp)
-		require.NoError(t, err)
-		assert.Equal(t, expectedReturnID, resp.ID)
-	})
-
-	t.Run("valid JSON with all fields", func(t *testing.T) {
-		jsonBody := `{
-				"name": "DevPC",
-				"ip_address": "10.0.0.2",
-				"mac_address": "11:22:33:44:55:66",
-				"employee_abbreviation": "STR",
-				"description": "Development Machine"
-			}`
-
-		req := httptest.NewRequest(http.MethodPost, "/computers", strings.NewReader(jsonBody))
-		req.Header.Set("Content-Type", "application/json")
-		rec := httptest.NewRecorder()
-
-		// Set up mocks
-
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-
-		mockComputerMgmtService := mocks.NewMockComputerMgmtService(ctrl)
-
-		servicesMocks := servicesMocks{
-			addComputer: addComputerMock{
-				expectedModel: model.Computer{
-					Name:                 "DevPC",
-					IPAddress:            "10.0.0.2",
-					MACAddress:           "11:22:33:44:55:66",
-					EmployeeAbbreviation: toPointer("STR"),
-					Description:          toPointer("Development Machine"),
-				},
-				returnID:    2,
-				returnError: nil,
+			mockBehavior: func(m *mocks.MockComputerMgmtService) {
+				m.EXPECT().
+					AddComputer(model.Computer{
+						Name:       "TestPC",
+						IPAddress:  "192.168.0.1",
+						MACAddress: "AA:BB:CC:DD:EE:FF",
+					}).
+					Return(1, nil)
 			},
-		}
-
-		mockComputerMgmtService.EXPECT().
-			AddComputer(servicesMocks.addComputer.expectedModel).
-			Return(servicesMocks.addComputer.returnID, servicesMocks.addComputer.returnError)
-
-		// Create system under test
-
-		handler := New(mockComputerMgmtService)
-		handler.AddComputer(rec, req)
-
-		result := rec.Result()
-		defer result.Body.Close()
-
-		// Define expections
-
-		expectedStatusCode := http.StatusCreated
-		expectedContentType := "application/json"
-		expectedReturnID := servicesMocks.addComputer.returnID
-
-		// Assertions
-
-		assert.Equal(t, expectedStatusCode, result.StatusCode)
-		assert.Equal(t, expectedContentType, result.Header.Get("Content-Type"))
-
-		var resp AddComputerResponse
-		err := json.NewDecoder(result.Body).Decode(&resp)
-		require.NoError(t, err)
-		assert.Equal(t, expectedReturnID, resp.ID)
-	})
-
-	t.Run("handler.AddComputer() fails due to service layer returning an internal server error", func(t *testing.T) {
-		jsonBody := `{
-			"name": "TestPC",
-			"ip_address": "192.168.0.1",
-			"mac_address": "AA:BB:CC:DD:EE:FF"
-		}`
-
-		req := httptest.NewRequest(http.MethodPost, "/computers", strings.NewReader(jsonBody))
-		req.Header.Set("Content-Type", "application/json")
-		rec := httptest.NewRecorder()
-
-		// Set up mocks
-
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-
-		mockComputerMgmtService := mocks.NewMockComputerMgmtService(ctrl)
-
-		servicesMocks := servicesMocks{
-			addComputer: addComputerMock{
-				expectedModel: model.Computer{
-					Name:       "TestPC",
-					IPAddress:  "192.168.0.1",
-					MACAddress: "AA:BB:CC:DD:EE:FF",
-				},
-				returnID:    0,
-				returnError: fmt.Errorf("something went wrong in the service layer"),
+			expectedStatusCode:  http.StatusCreated,
+			expectedContentType: "application/json",
+			expectedID:          1,
+		},
+		{
+			name: "valid JSON with all fields",
+			args: args{
+				jsonBody: `{
+                    "name": "DevPC",
+                    "ip_address": "10.0.0.2",
+                    "mac_address": "11:22:33:44:55:66",
+                    "employee_abbreviation": "STR",
+                    "description": "Development Machine"
+                }`,
 			},
-		}
+			mockBehavior: func(m *mocks.MockComputerMgmtService) {
+				m.EXPECT().
+					AddComputer(model.Computer{
+						Name:                 "DevPC",
+						IPAddress:            "10.0.0.2",
+						MACAddress:           "11:22:33:44:55:66",
+						EmployeeAbbreviation: toPointer("STR"),
+						Description:          toPointer("Development Machine"),
+					}).
+					Return(2, nil)
+			},
+			expectedStatusCode:  http.StatusCreated,
+			expectedContentType: "application/json",
+			expectedID:          2,
+		},
+		{
+			name: "service layer returns error",
+			args: args{
+				jsonBody: `{
+                    "name": "TestPC",
+                    "ip_address": "192.168.0.1",
+                    "mac_address": "AA:BB:CC:DD:EE:FF"
+                }`,
+			},
+			mockBehavior: func(m *mocks.MockComputerMgmtService) {
+				m.EXPECT().
+					AddComputer(model.Computer{
+						Name:       "TestPC",
+						IPAddress:  "192.168.0.1",
+						MACAddress: "AA:BB:CC:DD:EE:FF",
+					}).
+					Return(0, fmt.Errorf("something went wrong in the service layer"))
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name: "invalid request: employee abbreviation is not 3 characters long",
+			args: args{
+				jsonBody: `{
+                    "name": "TestPC",
+                    "ip_address": "192.168.0.1",
+                    "mac_address": "AA:BB:CC:DD:EE:FF",
+                    "employee_abbreviation": "Stefan",
+                    "description": "Development Machine"
+                }`,
+			},
+			mockBehavior: func(m *mocks.MockComputerMgmtService) {
+				// No service call expected because of prior validation error
+			},
+			expectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			name: "invalid JSON request",
+			args: args{
+				jsonBody: `{
+                    "name": "TestPC",
+                    "ip_address": "192.168.0.1",
+                    "mac_address": "AA:BB:CC:DD:EE:FF"
+                `, // missing closing brace
+			},
+			mockBehavior: func(m *mocks.MockComputerMgmtService) {
+				// No service call expected because JSON is invalid
+			},
+			expectedStatusCode: http.StatusBadRequest,
+		},
+	}
 
-		mockComputerMgmtService.EXPECT().
-			AddComputer(servicesMocks.addComputer.expectedModel).
-			Return(servicesMocks.addComputer.returnID, servicesMocks.addComputer.returnError)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Arrange
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 
-		// Set up system under test
+			mockComputerMgmtService := mocks.NewMockComputerMgmtService(ctrl)
+			tt.mockBehavior(mockComputerMgmtService)
 
-		handler := New(mockComputerMgmtService)
-		handler.AddComputer(rec, req)
+			req := httptest.NewRequest(http.MethodPost, "/computers", strings.NewReader(tt.args.jsonBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
 
-		result := rec.Result()
-		defer result.Body.Close()
+			handler := New(mockComputerMgmtService)
 
-		// Define expectations
+			// Act
+			handler.AddComputer(rec, req)
 
-		expectedStatusCode := http.StatusInternalServerError
+			// Assert
+			res := rec.Result()
+			defer res.Body.Close()
 
-		// Assertions
+			assert.Equal(t, tt.expectedStatusCode, res.StatusCode)
 
-		assert.Equal(t, expectedStatusCode, result.StatusCode)
-	})
+			if tt.expectedContentType != "" {
+				assert.Equal(t, tt.expectedContentType, res.Header.Get("Content-Type"))
+			}
 
-	t.Run("handler.AddComputer() fails due to an invalid JSON request", func(t *testing.T) {
-		jsonBody := `{
-				"name": "TestPC",
-				"ip_address": "192.168.0.1",
-				"mac_address": "AA:BB:CC:DD:EE:FF"
-			`
-
-		req := httptest.NewRequest(http.MethodPost, "/computers", strings.NewReader(jsonBody))
-		req.Header.Set("Content-Type", "application/json")
-		rec := httptest.NewRecorder()
-
-		// Set up mocks
-
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-
-		mockComputerMgmtService := mocks.NewMockComputerMgmtService(ctrl)
-
-		// Set up system under test
-
-		handler := New(mockComputerMgmtService)
-		handler.AddComputer(rec, req)
-
-		res := rec.Result()
-		defer res.Body.Close()
-
-		// Define expectations
-
-		expectedStatusCode := http.StatusBadRequest
-
-		// Assertions
-
-		assert.Equal(t, expectedStatusCode, res.StatusCode)
-	})
+			if tt.expectedID != 0 {
+				var resp AddComputerResponse
+				err := json.NewDecoder(res.Body).Decode(&resp)
+				require.NoError(t, err)
+				assert.Equal(t, tt.expectedID, resp.ID)
+			}
+		})
+	}
 }
 
 func toPointer(s string) *string {
