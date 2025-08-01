@@ -40,13 +40,13 @@ func (c *ComputerMgmtHandler) AddComputer(w http.ResponseWriter, r *http.Request
 
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		log.Error("failed to decode the request body: " + err.Error())
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		handleError(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	if data.EmployeeAbbreviation != nil && len(*data.EmployeeAbbreviation) != 3 {
 		log.Error("failed to parse employee abbreviation: it must be a 3-characters string")
-		http.Error(w, "Invalid employee abbreviation", http.StatusBadRequest)
+		handleError(w, "Invalid employee abbreviation", http.StatusBadRequest)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (c *ComputerMgmtHandler) AddComputer(w http.ResponseWriter, r *http.Request
 	computerID, err := c.computerMgmtService.AddComputer(computer)
 	if err != nil {
 		log.Error("failed to add computer: " + err.Error())
-		http.Error(w, "Failed to add computer", http.StatusInternalServerError)
+		handleError(w, "Failed to add computer", http.StatusInternalServerError)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (c *ComputerMgmtHandler) GetComputerByID(w http.ResponseWriter, r *http.Req
 	computerID, err := strconv.Atoi(paramComputerID)
 	if err != nil {
 		log.Error("failed to parse URL parameter computerID: " + err.Error())
-		http.Error(w, "Invalid URL parameter", http.StatusBadRequest)
+		handleError(w, "Invalid URL parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -99,12 +99,12 @@ func (c *ComputerMgmtHandler) GetComputerByID(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		var nf *errs.NotFoundError
 		if errors.As(err, &nf) {
-			http.Error(w, nf.Error(), http.StatusNotFound)
+			handleError(w, nf.Error(), http.StatusNotFound)
 			return
 		}
 
 		log.Error("failed to get computer by ID: " + err.Error())
-		http.Error(w, "Failed to get computer by ID", http.StatusInternalServerError)
+		handleError(w, "Failed to get computer by ID", http.StatusInternalServerError)
 		return
 	}
 
@@ -129,7 +129,7 @@ func (c *ComputerMgmtHandler) GetAllComputers(w http.ResponseWriter, r *http.Req
 	computers, err := c.computerMgmtService.GetAllComputers()
 	if err != nil {
 		log.Error("failed to get all computers: " + err.Error())
-		http.Error(w, "Failed to get all computers", http.StatusInternalServerError)
+		handleError(w, "Failed to get all computers", http.StatusInternalServerError)
 		return
 	}
 
@@ -157,7 +157,7 @@ func (c *ComputerMgmtHandler) UpdateComputer(w http.ResponseWriter, r *http.Requ
 	computerID, err := strconv.Atoi(paramComputerID)
 	if err != nil {
 		log.Error("failed to parse URL parameter computerID: " + err.Error())
-		http.Error(w, "Invalid URL parameter", http.StatusBadRequest)
+		handleError(w, "Invalid URL parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -165,13 +165,13 @@ func (c *ComputerMgmtHandler) UpdateComputer(w http.ResponseWriter, r *http.Requ
 
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		log.Error("failed to decode the request body: " + err.Error())
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		handleError(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	if data.EmployeeAbbreviation != nil && len(*data.EmployeeAbbreviation) != 3 {
 		log.Error("failed to parse employee abbreviation: it must be a 3-characters string")
-		http.Error(w, "Invalid employee abbreviation", http.StatusBadRequest)
+		handleError(w, "Invalid employee abbreviation", http.StatusBadRequest)
 		return
 	}
 
@@ -185,7 +185,7 @@ func (c *ComputerMgmtHandler) UpdateComputer(w http.ResponseWriter, r *http.Requ
 
 	if err := c.computerMgmtService.UpdateComputer(computerID, computer); err != nil {
 		log.Error("failed to update computer: " + err.Error())
-		http.Error(w, "Failed to update computer", http.StatusInternalServerError)
+		handleError(w, "Failed to update computer", http.StatusInternalServerError)
 		return
 	}
 
@@ -199,14 +199,14 @@ func (c *ComputerMgmtHandler) GetComputersByEmployee(w http.ResponseWriter, r *h
 	employee := vars["employee"]
 	if len(employee) != 3 {
 		log.Error("failed to parse URL parameter 'employee': it must be a 3-characters string")
-		http.Error(w, "Invalid URL parameter 'employee'", http.StatusBadRequest)
+		handleError(w, "Invalid URL parameter 'employee'", http.StatusBadRequest)
 		return
 	}
 
 	computers, err := c.computerMgmtService.GetComputersByEmployee(employee)
 	if err != nil {
 		log.Error("failed to get computers by employee: " + err.Error())
-		http.Error(w, "Failed to get computers by employee", http.StatusInternalServerError)
+		handleError(w, "Failed to get computers by employee", http.StatusInternalServerError)
 		return
 	}
 
@@ -234,13 +234,13 @@ func (c *ComputerMgmtHandler) DeleteComputer(w http.ResponseWriter, r *http.Requ
 	computerID, err := strconv.Atoi(paramComputerID)
 	if err != nil {
 		log.Error("failed to parse URL parameter 'computerID': " + err.Error())
-		http.Error(w, "Invalid URL parameter 'computerID'", http.StatusBadRequest)
+		handleError(w, "Invalid URL parameter 'computerID'", http.StatusBadRequest)
 		return
 	}
 
 	if err := c.computerMgmtService.DeleteComputer(computerID); err != nil {
 		log.Error("failed to delete computer: " + err.Error())
-		http.Error(w, "Failed to delete computer", http.StatusInternalServerError)
+		handleError(w, "Failed to delete computer", http.StatusInternalServerError)
 		return
 	}
 
