@@ -13,7 +13,7 @@ type AddComputerResponse struct {
 }
 
 type GetComputerByIDResponse struct {
-	ID                   string  `json:"id"`
+	ID                   int     `json:"id"`
 	Name                 string  `json:"name"`
 	IPAddress            string  `json:"ip_address"`
 	MACAddress           string  `json:"mac_address"`

@@ -1,13 +1,12 @@
 package handler
 
 import (
-	"strconv"
 	"uhuaha/computers-management/internal/model"
 )
 
 func convertComputerModelToDTO(computer model.Computer) GetComputerByIDResponse {
 	return GetComputerByIDResponse{
-		ID:                   strconv.Itoa(computer.ID),
+		ID:                   computer.ID,
 		Name:                 computer.Name,
 		IPAddress:            computer.IPAddress,
 		MACAddress:           computer.MACAddress,
@@ -21,7 +20,7 @@ func convertComputerModelsToDTOs(computers []model.Computer) GetComputersRespons
 
 	for i, computer := range computers {
 		computerDTOs[i] = GetComputerByIDResponse{
-			ID:                   strconv.Itoa(computer.ID),
+			ID:                   computer.ID,
 			Name:                 computer.Name,
 			IPAddress:            computer.IPAddress,
 			MACAddress:           computer.MACAddress,
