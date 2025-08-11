@@ -15,10 +15,14 @@ type NotificationPayload struct {
 	Message              string `json:"message"`
 }
 
-type Notifier struct{}
+type Notifier struct {
+	connection string
+}
 
-func NewNotifier() *Notifier {
-	return &Notifier{}
+func NewNotifier(connection string) *Notifier {
+	return &Notifier{
+		connection: connection,
+	}
 }
 
 // SendMessage sends a warning message if an employee has 3 or more computers assigned to them.
@@ -35,7 +39,8 @@ func (n *Notifier) SendMessage(employeeAbbreviation string) {
 		return
 	}
 
-	resp, err := http.Post("http://localhost:8080/api/notify", "application/json", bytes.NewReader(notification))
+	notifyURL := n.connection + "/api/notify"
+	resp, err := http.Post(notifyURL, "application/json", bytes.NewReader(notification))
 	if err != nil {
 		log.Error("failed to send message: failed to send POST request to /api/notify: " + err.Error())
 		return

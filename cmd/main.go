@@ -18,13 +18,15 @@ import (
 const PORT = ":8081"
 
 func main() {
-	dbConn, err := db.NewConnection()
+	dbConnection, err := db.NewConnection()
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}
+	repository := postgres.NewRepository(dbConnection)
 
-	repository := postgres.NewRepository(dbConn)
-	notifier := service.NewNotifier()
+	notifierConnection := "http://localhost:8080"
+	notifier := service.NewNotifier(notifierConnection)
+
 	computerMgmtService := service.NewComputerMgmtService(repository, notifier)
 	handler := handler.New(computerMgmtService)
 	router := router.New(handler)
