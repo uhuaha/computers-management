@@ -91,11 +91,24 @@ func (s *ComputerMgmtService) GetAllComputers() ([]model.Computer, error) {
 // UpdateComputer updates the data of an existing computer identified by its ID.
 func (s *ComputerMgmtService) UpdateComputer(computerID int, data model.Computer) error {
 	data.ID = computerID
-	dataToBeUpdated := convertComputerModelToDBO(data)
+	computerDBO := convertComputerModelToDBO(data)
 
-	err := s.repository.UpdateComputer(computerID, dataToBeUpdated)
+	err := s.repository.UpdateComputer(computerID, computerDBO)
 	if err != nil {
 		return fmt.Errorf("failed to update the computer with ID=%d: %w", computerID, err)
+	}
+
+	// Notify system administrator if there are 3 or more computers assigned to the given employee.
+	if data.EmployeeAbbreviation != nil {
+		computers, err := s.GetComputersByEmployee(*data.EmployeeAbbreviation)
+		if err != nil {
+			log.Error("failed to get computers: " + err.Error())
+			return fmt.Errorf("failed to get computers for employee %q: %w", *data.EmployeeAbbreviation, err)
+		}
+
+		if len(computers) >= 3 {
+			go s.notifier.SendMessage(*data.EmployeeAbbreviation)
+		}
 	}
 
 	return nil
