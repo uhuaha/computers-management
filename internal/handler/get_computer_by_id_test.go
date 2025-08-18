@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	errs "uhuaha/computers-management/internal/errors"
 	"uhuaha/computers-management/internal/mocks"
 	"uhuaha/computers-management/internal/model"
+
+	errs "uhuaha/computers-management/internal/errors"
 
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
